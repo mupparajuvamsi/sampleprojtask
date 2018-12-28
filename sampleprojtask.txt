@@ -1,0 +1,100 @@
+Jenkins Server
+...................................................Install Java 8 ................
+hostnamectl set-hostname jenkinsserver
+
+yum install wget git -y
+cd /opt
+wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u191-b12/2787e4a523244c269598db4e85c51e0c/jdk-8u191-linux-x64.tar.gz
+tar xvf jdk-8u191-linux-x64.tar.gz
+cd /opt/jdk1.8.0_191/
+alternatives --install /usr/bin/java java /opt/jdk1.8.0_191/bin/java 2
+alternatives --config java
+
+alternatives --install /usr/bin/jar jar /opt/jdk1.8.0_191/bin/jar 2
+alternatives --install /usr/bin/javac javac /opt/jdk1.8.0_191/bin/javac 2
+alternatives --set jar /opt/jdk1.8.0_191/bin/jar
+alternatives --set javac /opt/jdk1.8.0_191/bin/javac
+
+vi /etc/profile.d/java.sh
+
+export JAVA_HOME=/opt/jdk1.8.0_191
+export JRE_HOME=/opt/jdk1.8.0_191/jre
+export PATH=$PATH:/opt/jdk1.8.0_191/bin:/opt/jdk1.8.0_191/jre/bin
+
+source /etc/profile.d/java.sh
+.....................................................Install Apache Maven ........................
+cd /opt
+wget http://mirrors.wuchna.com/apachemirror/maven/maven-3/3.6.0/binaries/apache-maven-3.6.0-bin.tar.gz
+tar xvf apache-maven-3.6.0-bin.tar.gz
+
+vi /etc/profile.d/maven.sh
+
+
+cat /etc/profile.d/maven.sh
+export MAVEN_HOME=/opt/apache-maven-3.6.0
+export PATH=${PATH}:/opt/apache-maven-3.6.0/bin
+source /etc/profile.d/maven.sh
+
+...........................................Install Jenkins..............................
+sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
+sudo rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key
+sudo yum install jenkins -y
+
+Start/Stop
+sudo service jenkins start/stop/restart
+sudo chkconfig jenkins on
+
+
+
+
+
+
+
+
+
+
+.............................................Ansible Machine..........................................................
+hostnamectl set-hostname ansibleserver
+Enable EPEL Repo on RHEL 7
+[root@ansibleserver ~]# yum install http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -y
+[root@ansibleserver ~]# yum install ansible -y
+
+
+............................................Apache Tomcat Machine...........................................................
+
+login as: ec2-user
+Authenticating with public key "imported-openssh-key"
+[ec2-user@ip-172-31-23-31 ~]$ sudo -i
+[root@ip-172-31-23-31 ~]# hostnamectl set-hostname tomcatserver
+[root@ip-172-31-23-31 ~]# exit
+logout
+[ec2-user@ip-172-31-23-31 ~]$ sudo -i
+[root@tomcatserver ~]#
+[root@tomcatserver ~]# yum install wget -y
+[root@tomcatserver ~]# cd /opt
+[root@tomcatserver opt]# wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u191-b12/2787e4a523244c269598db4e85c51e0c/jdk-8u191-linux-x64.tar.gz
+[root@tomcatserver opt]# tar xvf jdk-8u191-linux-x64.tar.gz
+[root@tomcatserver opt]# cd /opt/jdk1.8.0_191/
+[root@tomcatserver jdk1.8.0_191]# alternatives --install /usr/bin/java java /opt/jdk1.8.0_191/bin/java 2
+[root@tomcatserver jdk1.8.0_191]# alternatives --config java
+
+There is 1 program that provides 'java'.
+
+  Selection    Command
+-----------------------------------------------
+*+ 1           /opt/jdk1.8.0_191/bin/java
+
+Enter to keep the current selection[+], or type selection number: 1
+[root@tomcatserver jdk1.8.0_191]#
+[root@tomcatserver jdk1.8.0_191]# alternatives --install /usr/bin/jar jar /opt/jdk1.8.0_191/bin/jar 2
+[root@tomcatserver jdk1.8.0_191]# alternatives --install /usr/bin/javac javac /opt/jdk1.8.0_191/bin/javac 2
+[root@tomcatserver jdk1.8.0_191]# alternatives --set jar /opt/jdk1.8.0_191/bin/jar
+[root@tomcatserver jdk1.8.0_191]# alternatives --set javac /opt/jdk1.8.0_191/bin/javac
+[root@tomcatserver jdk1.8.0_191]# vi /etc/profile.d/java.sh
+[root@tomcatserver jdk1.8.0_191]# cat /etc/profile.d/java.sh
+export JAVA_HOME=/opt/jdk1.8.0_191
+export JRE_HOME=/opt/jdk1.8.0_191/jre
+export PATH=$PATH:/opt/jdk1.8.0_191/bin:/opt/jdk1.8.0_191/jre/bin
+[root@tomcatserver jdk1.8.0_191]# source /etc/profile.d/java.sh
+[root@tomcatserver opt]# wget http://mirrors.wuchna.com/apachemirror/tomcat/tomcat-8/v8.5.37/bin/apache-tomcat-8.5.37.tar.gz
+[root@tomcatserver opt]# tar xvf apache-tomcat-8.5.37.tar.gz
