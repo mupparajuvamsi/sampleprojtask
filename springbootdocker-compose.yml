@@ -1,0 +1,24 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+services:
+
+  springbootdockerpostgresql:
+    image: wonwoo/spring-boot-docker-postgresql
+	container_name: spring-boot-docker-postgresql
+    restart: always
+	ports:
+      - "8080:8080"
+	depends_on:
+      - spirngbootpostgres
+    
+
+  spirngbootpostgres:
+    image: postgres
+	container_name: spring-boot-postgres
+    restart: always
+    ports:
+      - "5432:5432"
+	environment:
+      POSTGRES_PASSWORD: dbpassword
+	  POSTGRES_DB: docker
