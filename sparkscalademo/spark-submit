@@ -1,0 +1,2 @@
+spark-submit --class com.example.createparquetfromcsv target/sparkhiveprojectexample-1.0-SNAPSHOT-jar-with-dependencies.
+jar --master local
