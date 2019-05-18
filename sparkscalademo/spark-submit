@@ -1,2 +1,6 @@
 spark-submit --class com.example.createparquetfromcsv target/sparkhiveprojectexample-1.0-SNAPSHOT-jar-with-dependencies.
 jar --master local
+
+
+spark-submit --master local --class "com.example.createparquetfromcsv" target/sparkhiveprojectexample-1.0-SNAPSHOT-jar-w
+ith-dependencies.jar "C:\\Users\\Tecmax\\Downloads\\ml-20m\\ratings.csv"
