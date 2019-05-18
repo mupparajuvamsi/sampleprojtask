@@ -4,3 +4,22 @@ jar --master local
 
 spark-submit --master local --class "com.example.createparquetfromcsv" target/sparkhiveprojectexample-1.0-SNAPSHOT-jar-w
 ith-dependencies.jar "C:\\Users\\Tecmax\\Downloads\\ml-20m\\ratings.csv"
+
+[hadoop@ip-172-31-31-46 ~]$ hadoop fs -ls
+[hadoop@ip-172-31-31-46 ~]$ hadoop fs -mkdir sparkinputfolder
+[hadoop@ip-172-31-31-46 ~]$ vi employee.csv
+[hadoop@ip-172-31-31-46 ~]$ hadoop fs -put employee.csv sparkinputfolder
+[hadoop@ip-172-31-31-46 ~]$ hadoop fs -ls sparkinputfolder
+Found 1 items
+-rw-r--r--   1 hadoop hadoop         43 2019-05-18 06:47 sparkinputfolder/employee.csv
+[hadoop@ip-172-31-31-46 ~]$ hadoop fa -cat sparkinputfolder/employee.csv
+Error: Could not find or load main class fa
+[hadoop@ip-172-31-31-46 ~]$ hadoop fs -cat sparkinputfolder/employee.csv
+empid,empname,empsal
+100,A,1000
+200,b,2000
+[hadoop@ip-172-31-31-46 ~]$ sudo cp /home/ec2-user/sparkhiveprojectexample-1.0-SNAPSHOT-jar-with-dependencies.jar .
+
+
+
+ spark-submit --master yarn --class "com.example.createparquetfromcsv" sparkhiveprojectexample-1.0-SNAPSHOT-jar-with-dependencies.jar "sparkinputfolder/employee.csv
