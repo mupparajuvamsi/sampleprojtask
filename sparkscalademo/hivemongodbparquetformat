@@ -1,0 +1,27 @@
+scala> [hadoop@ip-172-31-22-138 ~]$ hive --service beeline
+Beeline version 2.3.4-amzn-1 by Apache Hive
+beeline> !connect jdbc:hive2://ec2-13-235-0-234.ap-south-1.compute.amazonaws.com:10000/default;
+Connecting to jdbc:hive2://ec2-13-235-0-234.ap-south-1.compute.amazonaws.com:10000/default;
+Enter username for jdbc:hive2://ec2-13-235-0-234.ap-south-1.compute.amazonaws.com:10000/default: hadoop
+Enter password for jdbc:hive2://ec2-13-235-0-234.ap-south-1.compute.amazonaws.com:10000/default: ****
+Connected to: Apache Hive (version 2.3.4-amzn-1)
+Driver: Hive JDBC (version 2.3.4-amzn-1)
+Transaction isolation: TRANSACTION_REPEATABLE_READ
+0: jdbc:hive2://ec2-13-235-0-234.ap-south-1.c> CREATE TABLE parquet_table_name (_id struct, empid STRING,empname STRING,empsal STRING)
+. . . . . . . . . . . . . . . . . . . . . . .>   STORED AS PARQUET;
+Error: Error while compiling statement: FAILED: ParseException line 1:33 cannot recognize input near '_id' 'struct' ',' in column name or primary key or foreign key (state=42000,code=40000)
+0: jdbc:hive2://ec2-13-235-0-234.ap-south-1.c> CREATE TABLE parquet_table_name (empid STRING,empname STRING,empsal STRING)
+. . . . . . . . . . . . . . . . . . . . . . .>   STORED AS PARQUET;
+No rows affected (1.087 seconds)
+0: jdbc:hive2://ec2-13-235-0-234.ap-south-1.c> LOAD DATA INPATH 'sparkoutputfolder/parquetoutput/' INTO TABLE parquet_table_name;
+Error: Error while compiling statement: FAILED: SemanticException Line 1:17 Invalid path ''sparkoutputfolder/parquetoutput/'': No files matching path hdfs://ip-172-31-22-138.ap-south-1.compute.internal:8020/user/hive/sparkoutputfolder/parquetoutput (state=42000,code=40000)
+0: jdbc:hive2://ec2-13-235-0-234.ap-south-1.c> LOAD DATA INPATH 'hdfs://ip-172-31-22-138.ap-south-1.compute.internal:8020/user/hadoop/sparkoutputfolder/parquetoutput/' INTO TABLE parquet_table_name;
+No rows affected (1.272 seconds)
+0: jdbc:hive2://ec2-13-235-0-234.ap-south-1.c> select * from parquet_table_name;
++---------------------------+-----------------------------+----------------------------+
+| parquet_table_name.empid  | parquet_table_name.empname  | parquet_table_name.empsal  |
++---------------------------+-----------------------------+----------------------------+
+| 100                       | vamsi                       | 1000                       |
+| 200                       | krishna                     | 2000                       |
++---------------------------+-----------------------------+----------------------------+
+2 rows selected (3.025 seconds)
