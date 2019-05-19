@@ -1,0 +1,52 @@
+package com.example
+
+import com.mongodb.spark.MongoSpark
+import com.mongodb.spark.config.ReadConfig
+import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.types.{StringType, StructField, StructType}
+
+object storedatafrommysqlinhdfs {
+  def main(args: Array[String]): Unit = {
+    val spark = SparkSession.builder().master("local[*]")
+    .enableHiveSupport()
+      .config("spark.mongodb.input.uri", "mongodb://52.66.250.183/employeedb.employee")
+      .config("spark.mongodb.output.uri", "mongodb://52.66.250.183/employeedb.employee")
+      .getOrCreate()
+   /* val dataframe_mysql = spark.read.format("jdbc")
+      .option("url", "jdbc:mysql://13.232.159.22:3306/employeedb")
+      .option("driver", "com.mysql.cj.jdbc.Driver")
+      .option("dbtable", "employee").option("user", "root")
+      .option("password", "UlVamsi@123").load()
+    dataframe_mysql.show(false)*/
+
+ /*   val dataframePostrges=spark.read.format("jdbc")
+      .option("url","jdbc:postgresql://localhost:5432/postgres")
+      .option("driver", "org.postgresql.Driver")
+      .option("dbtable", "student").option("user", "postgres")
+      .option("password", "postgres").load()
+
+    dataframePostrges.show(false)*/
+ val readConfig = ReadConfig(Map("collection" -> "employee", "readPreference.name" -> "secondaryPreferred"), Some(ReadConfig(spark.sparkContext)))
+    val customRdd = MongoSpark.load(spark.sparkContext, readConfig)
+
+    //customRdd.collect().foreach(println)
+
+    val schema = new StructType()
+      .add(StructField("empid", StringType, true))
+      .add(StructField("empname", StringType, true))
+      .add(StructField("empsal", StringType, true))
+    //val df = spark.createDataFrame(customRdd, schema)
+    val aStruct = new StructType(Array(StructField("empid",StringType,nullable = true),StructField("empname",StringType,nullable = true),StructField("empsal",StringType,nullable = true)))
+
+   // spark.sqlContext.createDataFrame(customRdd,schema)
+   //val aNamedDF = spark.sqlContext.createDataFrame(customRdd,aStruct)
+
+
+   val mongoDataFrame= spark.read.
+     format("com.mongodb.spark.sql.DefaultSource")
+     .option("uri", "mongodb://52.66.250.183/employeedb.employee").load()
+    mongoDataFrame.show(false)
+    mongoDataFrame.write.format("parquet")
+      .save("sparkoutputfolder/parquetoutput")
+  }
+}
